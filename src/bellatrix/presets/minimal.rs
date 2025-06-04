@@ -149,17 +149,17 @@ pub type SignedBeaconBlock = bellatrix::SignedBeaconBlock<
     MAX_TRANSACTIONS_PER_PAYLOAD,
 >;
 
-pub type NoOpExecutionEngine = bellatrix::NoOpExecutionEngine<
-    BYTES_PER_LOGS_BLOOM,
-    MAX_EXTRA_DATA_BYTES,
-    MAX_BYTES_PER_TRANSACTION,
-    MAX_TRANSACTIONS_PER_PAYLOAD,
->;
+// pub type NoOpExecutionEngine = bellatrix::NoOpExecutionEngine<
+//     BYTES_PER_LOGS_BLOOM,
+//     MAX_EXTRA_DATA_BYTES,
+//     MAX_BYTES_PER_TRANSACTION,
+//     MAX_TRANSACTIONS_PER_PAYLOAD,
+// >;
 
-pub type MockExecutionEngine<F> = bellatrix::MockExecutionEngine<
-    BYTES_PER_LOGS_BLOOM,
-    MAX_EXTRA_DATA_BYTES,
-    MAX_BYTES_PER_TRANSACTION,
-    MAX_TRANSACTIONS_PER_PAYLOAD,
-    F,
->;
+// pub type MockExecutionEngine<F> = bellatrix::MockExecutionEngine<
+//     BYTES_PER_LOGS_BLOOM,
+//     MAX_EXTRA_DATA_BYTES,
+//     MAX_BYTES_PER_TRANSACTION,
+//     MAX_TRANSACTIONS_PER_PAYLOAD,
+//     F,
+// >;

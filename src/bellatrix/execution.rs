@@ -122,148 +122,148 @@ impl<
     }
 }
 
-pub trait ExecutionEngine<
-    const BYTES_PER_LOGS_BLOOM: usize,
-    const MAX_EXTRA_DATA_BYTES: usize,
-    const MAX_BYTES_PER_TRANSACTION: usize,
-    const MAX_TRANSACTIONS_PER_PAYLOAD: usize,
-> where
-    Self: Clone,
-{
-    fn notify_new_payload(
-        &self,
-        execution_payload: &ExecutionPayload<
-            BYTES_PER_LOGS_BLOOM,
-            MAX_EXTRA_DATA_BYTES,
-            MAX_BYTES_PER_TRANSACTION,
-            MAX_TRANSACTIONS_PER_PAYLOAD,
-        >,
-    ) -> state_transition::Result<()>;
-}
+// pub trait ExecutionEngine<
+//     const BYTES_PER_LOGS_BLOOM: usize,
+//     const MAX_EXTRA_DATA_BYTES: usize,
+//     const MAX_BYTES_PER_TRANSACTION: usize,
+//     const MAX_TRANSACTIONS_PER_PAYLOAD: usize,
+// > where
+//     Self: Clone,
+// {
+//     fn notify_new_payload(
+//         &self,
+//         execution_payload: &ExecutionPayload<
+//             BYTES_PER_LOGS_BLOOM,
+//             MAX_EXTRA_DATA_BYTES,
+//             MAX_BYTES_PER_TRANSACTION,
+//             MAX_TRANSACTIONS_PER_PAYLOAD,
+//         >,
+//     ) -> state_transition::Result<()>;
+// }
 
-#[derive(Clone)]
-pub struct NoOpExecutionEngine<
-    const BYTES_PER_LOGS_BLOOM: usize,
-    const MAX_EXTRA_DATA_BYTES: usize,
-    const MAX_BYTES_PER_TRANSACTION: usize,
-    const MAX_TRANSACTIONS_PER_PAYLOAD: usize,
->;
+// #[derive(Clone)]
+// pub struct NoOpExecutionEngine<
+//     const BYTES_PER_LOGS_BLOOM: usize,
+//     const MAX_EXTRA_DATA_BYTES: usize,
+//     const MAX_BYTES_PER_TRANSACTION: usize,
+//     const MAX_TRANSACTIONS_PER_PAYLOAD: usize,
+// >;
 
-impl<
-        const BYTES_PER_LOGS_BLOOM: usize,
-        const MAX_EXTRA_DATA_BYTES: usize,
-        const MAX_BYTES_PER_TRANSACTION: usize,
-        const MAX_TRANSACTIONS_PER_PAYLOAD: usize,
-    >
-    ExecutionEngine<
-        BYTES_PER_LOGS_BLOOM,
-        MAX_EXTRA_DATA_BYTES,
-        MAX_BYTES_PER_TRANSACTION,
-        MAX_TRANSACTIONS_PER_PAYLOAD,
-    >
-    for NoOpExecutionEngine<
-        BYTES_PER_LOGS_BLOOM,
-        MAX_EXTRA_DATA_BYTES,
-        MAX_BYTES_PER_TRANSACTION,
-        MAX_TRANSACTIONS_PER_PAYLOAD,
-    >
-{
-    fn notify_new_payload(
-        &self,
-        _execution_payload: &ExecutionPayload<
-            BYTES_PER_LOGS_BLOOM,
-            MAX_EXTRA_DATA_BYTES,
-            MAX_BYTES_PER_TRANSACTION,
-            MAX_TRANSACTIONS_PER_PAYLOAD,
-        >,
-    ) -> state_transition::Result<()> {
-        Ok(())
-    }
-}
+// impl<
+//         const BYTES_PER_LOGS_BLOOM: usize,
+//         const MAX_EXTRA_DATA_BYTES: usize,
+//         const MAX_BYTES_PER_TRANSACTION: usize,
+//         const MAX_TRANSACTIONS_PER_PAYLOAD: usize,
+//     >
+//     ExecutionEngine<
+//         BYTES_PER_LOGS_BLOOM,
+//         MAX_EXTRA_DATA_BYTES,
+//         MAX_BYTES_PER_TRANSACTION,
+//         MAX_TRANSACTIONS_PER_PAYLOAD,
+//     >
+//     for NoOpExecutionEngine<
+//         BYTES_PER_LOGS_BLOOM,
+//         MAX_EXTRA_DATA_BYTES,
+//         MAX_BYTES_PER_TRANSACTION,
+//         MAX_TRANSACTIONS_PER_PAYLOAD,
+//     >
+// {
+//     fn notify_new_payload(
+//         &self,
+//         _execution_payload: &ExecutionPayload<
+//             BYTES_PER_LOGS_BLOOM,
+//             MAX_EXTRA_DATA_BYTES,
+//             MAX_BYTES_PER_TRANSACTION,
+//             MAX_TRANSACTIONS_PER_PAYLOAD,
+//         >,
+//     ) -> state_transition::Result<()> {
+//         Ok(())
+//     }
+// }
 
-#[derive(Clone)]
-pub struct MockExecutionEngine<
-    const BYTES_PER_LOGS_BLOOM: usize,
-    const MAX_EXTRA_DATA_BYTES: usize,
-    const MAX_BYTES_PER_TRANSACTION: usize,
-    const MAX_TRANSACTIONS_PER_PAYLOAD: usize,
-    F: Fn(
-        &ExecutionPayload<
-            BYTES_PER_LOGS_BLOOM,
-            MAX_EXTRA_DATA_BYTES,
-            MAX_BYTES_PER_TRANSACTION,
-            MAX_TRANSACTIONS_PER_PAYLOAD,
-        >,
-    ) -> state_transition::Result<()>,
-> {
-    f: F,
-}
+// #[derive(Clone)]
+// pub struct MockExecutionEngine<
+//     const BYTES_PER_LOGS_BLOOM: usize,
+//     const MAX_EXTRA_DATA_BYTES: usize,
+//     const MAX_BYTES_PER_TRANSACTION: usize,
+//     const MAX_TRANSACTIONS_PER_PAYLOAD: usize,
+//     F: Fn(
+//         &ExecutionPayload<
+//             BYTES_PER_LOGS_BLOOM,
+//             MAX_EXTRA_DATA_BYTES,
+//             MAX_BYTES_PER_TRANSACTION,
+//             MAX_TRANSACTIONS_PER_PAYLOAD,
+//         >,
+//     ) -> state_transition::Result<()>,
+// > {
+//     f: F,
+// }
 
-impl<
-        const BYTES_PER_LOGS_BLOOM: usize,
-        const MAX_EXTRA_DATA_BYTES: usize,
-        const MAX_BYTES_PER_TRANSACTION: usize,
-        const MAX_TRANSACTIONS_PER_PAYLOAD: usize,
-        F: Fn(
-            &ExecutionPayload<
-                BYTES_PER_LOGS_BLOOM,
-                MAX_EXTRA_DATA_BYTES,
-                MAX_BYTES_PER_TRANSACTION,
-                MAX_TRANSACTIONS_PER_PAYLOAD,
-            >,
-        ) -> state_transition::Result<()>,
-    >
-    MockExecutionEngine<
-        BYTES_PER_LOGS_BLOOM,
-        MAX_EXTRA_DATA_BYTES,
-        MAX_BYTES_PER_TRANSACTION,
-        MAX_TRANSACTIONS_PER_PAYLOAD,
-        F,
-    >
-{
-    pub fn new(f: F) -> Self {
-        Self { f }
-    }
-}
+// impl<
+//         const BYTES_PER_LOGS_BLOOM: usize,
+//         const MAX_EXTRA_DATA_BYTES: usize,
+//         const MAX_BYTES_PER_TRANSACTION: usize,
+//         const MAX_TRANSACTIONS_PER_PAYLOAD: usize,
+//         F: Fn(
+//             &ExecutionPayload<
+//                 BYTES_PER_LOGS_BLOOM,
+//                 MAX_EXTRA_DATA_BYTES,
+//                 MAX_BYTES_PER_TRANSACTION,
+//                 MAX_TRANSACTIONS_PER_PAYLOAD,
+//             >,
+//         ) -> state_transition::Result<()>,
+//     >
+//     MockExecutionEngine<
+//         BYTES_PER_LOGS_BLOOM,
+//         MAX_EXTRA_DATA_BYTES,
+//         MAX_BYTES_PER_TRANSACTION,
+//         MAX_TRANSACTIONS_PER_PAYLOAD,
+//         F,
+//     >
+// {
+//     pub fn new(f: F) -> Self {
+//         Self { f }
+//     }
+// }
 
-impl<
-        const BYTES_PER_LOGS_BLOOM: usize,
-        const MAX_EXTRA_DATA_BYTES: usize,
-        const MAX_BYTES_PER_TRANSACTION: usize,
-        const MAX_TRANSACTIONS_PER_PAYLOAD: usize,
-        F: Fn(
-                &ExecutionPayload<
-                    BYTES_PER_LOGS_BLOOM,
-                    MAX_EXTRA_DATA_BYTES,
-                    MAX_BYTES_PER_TRANSACTION,
-                    MAX_TRANSACTIONS_PER_PAYLOAD,
-                >,
-            ) -> state_transition::Result<()>
-            + Clone,
-    >
-    ExecutionEngine<
-        BYTES_PER_LOGS_BLOOM,
-        MAX_EXTRA_DATA_BYTES,
-        MAX_BYTES_PER_TRANSACTION,
-        MAX_TRANSACTIONS_PER_PAYLOAD,
-    >
-    for MockExecutionEngine<
-        BYTES_PER_LOGS_BLOOM,
-        MAX_EXTRA_DATA_BYTES,
-        MAX_BYTES_PER_TRANSACTION,
-        MAX_TRANSACTIONS_PER_PAYLOAD,
-        F,
-    >
-{
-    fn notify_new_payload(
-        &self,
-        execution_payload: &ExecutionPayload<
-            BYTES_PER_LOGS_BLOOM,
-            MAX_EXTRA_DATA_BYTES,
-            MAX_BYTES_PER_TRANSACTION,
-            MAX_TRANSACTIONS_PER_PAYLOAD,
-        >,
-    ) -> state_transition::Result<()> {
-        (self.f)(execution_payload)
-    }
-}
+// impl<
+//         const BYTES_PER_LOGS_BLOOM: usize,
+//         const MAX_EXTRA_DATA_BYTES: usize,
+//         const MAX_BYTES_PER_TRANSACTION: usize,
+//         const MAX_TRANSACTIONS_PER_PAYLOAD: usize,
+//         F: Fn(
+//                 &ExecutionPayload<
+//                     BYTES_PER_LOGS_BLOOM,
+//                     MAX_EXTRA_DATA_BYTES,
+//                     MAX_BYTES_PER_TRANSACTION,
+//                     MAX_TRANSACTIONS_PER_PAYLOAD,
+//                 >,
+//             ) -> state_transition::Result<()>
+//             + Clone,
+//     >
+//     ExecutionEngine<
+//         BYTES_PER_LOGS_BLOOM,
+//         MAX_EXTRA_DATA_BYTES,
+//         MAX_BYTES_PER_TRANSACTION,
+//         MAX_TRANSACTIONS_PER_PAYLOAD,
+//     >
+//     for MockExecutionEngine<
+//         BYTES_PER_LOGS_BLOOM,
+//         MAX_EXTRA_DATA_BYTES,
+//         MAX_BYTES_PER_TRANSACTION,
+//         MAX_TRANSACTIONS_PER_PAYLOAD,
+//         F,
+//     >
+// {
+//     fn notify_new_payload(
+//         &self,
+//         execution_payload: &ExecutionPayload<
+//             BYTES_PER_LOGS_BLOOM,
+//             MAX_EXTRA_DATA_BYTES,
+//             MAX_BYTES_PER_TRANSACTION,
+//             MAX_TRANSACTIONS_PER_PAYLOAD,
+//         >,
+//     ) -> state_transition::Result<()> {
+//         (self.f)(execution_payload)
+//     }
+// }

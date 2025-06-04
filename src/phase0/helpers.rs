@@ -1,6 +1,8 @@
+
 use crate::phase0 as spec;
 
-use crate::crypto::{fast_aggregate_verify, hash, verify_signature};
+// use crate::crypto::{fast_aggregate_verify, hash, verify_signature};
+use crate::crypto::hash;
 use crate::primitives::{
     Bytes32, CommitteeIndex, Domain, DomainType, Epoch, ForkDigest, Gwei, Root, Slot,
     ValidatorIndex, Version, FAR_FUTURE_EPOCH, GENESIS_EPOCH,
@@ -66,148 +68,148 @@ pub fn is_slashable_attestation_data(data_1: &AttestationData, data_2: &Attestat
     double_vote || surround_vote
 }
 
-pub fn is_valid_indexed_attestation<
-    const SLOTS_PER_HISTORICAL_ROOT: usize,
-    const HISTORICAL_ROOTS_LIMIT: usize,
-    const ETH1_DATA_VOTES_BOUND: usize,
-    const VALIDATOR_REGISTRY_LIMIT: usize,
-    const EPOCHS_PER_HISTORICAL_VECTOR: usize,
-    const EPOCHS_PER_SLASHINGS_VECTOR: usize,
-    const MAX_VALIDATORS_PER_COMMITTEE: usize,
-    const PENDING_ATTESTATIONS_BOUND: usize,
->(
-    state: &BeaconState<
-        SLOTS_PER_HISTORICAL_ROOT,
-        HISTORICAL_ROOTS_LIMIT,
-        ETH1_DATA_VOTES_BOUND,
-        VALIDATOR_REGISTRY_LIMIT,
-        EPOCHS_PER_HISTORICAL_VECTOR,
-        EPOCHS_PER_SLASHINGS_VECTOR,
-        MAX_VALIDATORS_PER_COMMITTEE,
-        PENDING_ATTESTATIONS_BOUND,
-    >,
-    indexed_attestation: &mut IndexedAttestation<MAX_VALIDATORS_PER_COMMITTEE>,
-    context: &Context,
-) -> Result<()> {
-    let attesting_indices = &indexed_attestation.attesting_indices;
+// pub fn is_valid_indexed_attestation<
+//     const SLOTS_PER_HISTORICAL_ROOT: usize,
+//     const HISTORICAL_ROOTS_LIMIT: usize,
+//     const ETH1_DATA_VOTES_BOUND: usize,
+//     const VALIDATOR_REGISTRY_LIMIT: usize,
+//     const EPOCHS_PER_HISTORICAL_VECTOR: usize,
+//     const EPOCHS_PER_SLASHINGS_VECTOR: usize,
+//     const MAX_VALIDATORS_PER_COMMITTEE: usize,
+//     const PENDING_ATTESTATIONS_BOUND: usize,
+// >(
+//     state: &BeaconState<
+//         SLOTS_PER_HISTORICAL_ROOT,
+//         HISTORICAL_ROOTS_LIMIT,
+//         ETH1_DATA_VOTES_BOUND,
+//         VALIDATOR_REGISTRY_LIMIT,
+//         EPOCHS_PER_HISTORICAL_VECTOR,
+//         EPOCHS_PER_SLASHINGS_VECTOR,
+//         MAX_VALIDATORS_PER_COMMITTEE,
+//         PENDING_ATTESTATIONS_BOUND,
+//     >,
+//     indexed_attestation: &mut IndexedAttestation<MAX_VALIDATORS_PER_COMMITTEE>,
+//     context: &Context,
+// ) -> Result<()> {
+//     let attesting_indices = &indexed_attestation.attesting_indices;
 
-    if attesting_indices.is_empty() {
-        return Err(invalid_operation_error(
-            InvalidOperation::IndexedAttestation(InvalidIndexedAttestation::AttestingIndicesEmpty),
-        ));
-    }
+//     if attesting_indices.is_empty() {
+//         return Err(invalid_operation_error(
+//             InvalidOperation::IndexedAttestation(InvalidIndexedAttestation::AttestingIndicesEmpty),
+//         ));
+//     }
 
-    let is_sorted = attesting_indices
-        .windows(2)
-        .map(|pair| {
-            let a = &pair[0];
-            let b = &pair[1];
-            a < b
-        })
-        .all(|x| x);
-    if !is_sorted {
-        return Err(invalid_operation_error(
-            InvalidOperation::IndexedAttestation(
-                InvalidIndexedAttestation::AttestingIndicesNotSorted,
-            ),
-        ));
-    }
+//     let is_sorted = attesting_indices
+//         .windows(2)
+//         .map(|pair| {
+//             let a = &pair[0];
+//             let b = &pair[1];
+//             a < b
+//         })
+//         .all(|x| x);
+//     if !is_sorted {
+//         return Err(invalid_operation_error(
+//             InvalidOperation::IndexedAttestation(
+//                 InvalidIndexedAttestation::AttestingIndicesNotSorted,
+//             ),
+//         ));
+//     }
 
-    let indices: HashSet<usize> = HashSet::from_iter(attesting_indices.iter().cloned());
-    if indices.len() != indexed_attestation.attesting_indices.len() {
-        let mut seen = HashSet::new();
-        let mut duplicates = vec![];
-        for i in indices.iter() {
-            if seen.contains(i) {
-                duplicates.push(*i);
-            } else {
-                seen.insert(i);
-            }
-        }
-        return Err(invalid_operation_error(
-            InvalidOperation::IndexedAttestation(InvalidIndexedAttestation::DuplicateIndices(
-                duplicates,
-            )),
-        ));
-    }
-    let mut public_keys = vec![];
-    for index in indices {
-        let public_key = state
-            .validators
-            .get(index)
-            .map(|v| &v.public_key)
-            .ok_or_else(|| {
-                invalid_operation_error(InvalidOperation::IndexedAttestation(
-                    InvalidIndexedAttestation::InvalidIndex(index),
-                ))
-            })?;
-        public_keys.push(public_key);
-    }
+//     let indices: HashSet<usize> = HashSet::from_iter(attesting_indices.iter().cloned());
+//     if indices.len() != indexed_attestation.attesting_indices.len() {
+//         let mut seen = HashSet::new();
+//         let mut duplicates = vec![];
+//         for i in indices.iter() {
+//             if seen.contains(i) {
+//                 duplicates.push(*i);
+//             } else {
+//                 seen.insert(i);
+//             }
+//         }
+//         return Err(invalid_operation_error(
+//             InvalidOperation::IndexedAttestation(InvalidIndexedAttestation::DuplicateIndices(
+//                 duplicates,
+//             )),
+//         ));
+//     }
+//     let mut public_keys = vec![];
+//     for index in indices {
+//         let public_key = state
+//             .validators
+//             .get(index)
+//             .map(|v| &v.public_key)
+//             .ok_or_else(|| {
+//                 invalid_operation_error(InvalidOperation::IndexedAttestation(
+//                     InvalidIndexedAttestation::InvalidIndex(index),
+//                 ))
+//             })?;
+//         public_keys.push(public_key);
+//     }
 
-    let domain = get_domain(
-        state,
-        DomainType::BeaconAttester,
-        Some(indexed_attestation.data.target.epoch),
-        context,
-    )?;
-    let signing_root = compute_signing_root(&mut indexed_attestation.data, domain)?;
-    fast_aggregate_verify(
-        &public_keys,
-        signing_root.as_ref(),
-        &indexed_attestation.signature,
-    )
-    .map_err(Into::into)
-}
+//     let domain = get_domain(
+//         state,
+//         DomainType::BeaconAttester,
+//         Some(indexed_attestation.data.target.epoch),
+//         context,
+//     )?;
+//     let signing_root = compute_signing_root(&mut indexed_attestation.data, domain)?;
+//     fast_aggregate_verify(
+//         &public_keys,
+//         signing_root.as_ref(),
+//         &indexed_attestation.signature,
+//     )
+//     .map_err(Into::into)
+// }
 
-pub fn verify_block_signature<
-    const SLOTS_PER_HISTORICAL_ROOT: usize,
-    const HISTORICAL_ROOTS_LIMIT: usize,
-    const ETH1_DATA_VOTES_BOUND: usize,
-    const VALIDATOR_REGISTRY_LIMIT: usize,
-    const EPOCHS_PER_HISTORICAL_VECTOR: usize,
-    const EPOCHS_PER_SLASHINGS_VECTOR: usize,
-    const MAX_VALIDATORS_PER_COMMITTEE: usize,
-    const PENDING_ATTESTATIONS_BOUND: usize,
-    const MAX_PROPOSER_SLASHINGS: usize,
-    const MAX_ATTESTER_SLASHINGS: usize,
-    const MAX_ATTESTATIONS: usize,
-    const MAX_DEPOSITS: usize,
-    const MAX_VOLUNTARY_EXITS: usize,
->(
-    state: &BeaconState<
-        SLOTS_PER_HISTORICAL_ROOT,
-        HISTORICAL_ROOTS_LIMIT,
-        ETH1_DATA_VOTES_BOUND,
-        VALIDATOR_REGISTRY_LIMIT,
-        EPOCHS_PER_HISTORICAL_VECTOR,
-        EPOCHS_PER_SLASHINGS_VECTOR,
-        MAX_VALIDATORS_PER_COMMITTEE,
-        PENDING_ATTESTATIONS_BOUND,
-    >,
-    signed_block: &mut SignedBeaconBlock<
-        MAX_PROPOSER_SLASHINGS,
-        MAX_VALIDATORS_PER_COMMITTEE,
-        MAX_ATTESTER_SLASHINGS,
-        MAX_ATTESTATIONS,
-        MAX_DEPOSITS,
-        MAX_VOLUNTARY_EXITS,
-    >,
-    context: &Context,
-) -> Result<()> {
-    let proposer_index = signed_block.message.proposer_index;
-    let proposer = state
-        .validators
-        .get(proposer_index)
-        .ok_or(Error::OutOfBounds {
-            requested: proposer_index,
-            bound: state.validators.len(),
-        })?;
-    let domain = get_domain(state, DomainType::BeaconProposer, None, context)?;
-    let signing_root = compute_signing_root(&mut signed_block.message, domain)?;
+// pub fn verify_block_signature<
+//     const SLOTS_PER_HISTORICAL_ROOT: usize,
+//     const HISTORICAL_ROOTS_LIMIT: usize,
+//     const ETH1_DATA_VOTES_BOUND: usize,
+//     const VALIDATOR_REGISTRY_LIMIT: usize,
+//     const EPOCHS_PER_HISTORICAL_VECTOR: usize,
+//     const EPOCHS_PER_SLASHINGS_VECTOR: usize,
+//     const MAX_VALIDATORS_PER_COMMITTEE: usize,
+//     const PENDING_ATTESTATIONS_BOUND: usize,
+//     const MAX_PROPOSER_SLASHINGS: usize,
+//     const MAX_ATTESTER_SLASHINGS: usize,
+//     const MAX_ATTESTATIONS: usize,
+//     const MAX_DEPOSITS: usize,
+//     const MAX_VOLUNTARY_EXITS: usize,
+// >(
+//     state: &BeaconState<
+//         SLOTS_PER_HISTORICAL_ROOT,
+//         HISTORICAL_ROOTS_LIMIT,
+//         ETH1_DATA_VOTES_BOUND,
+//         VALIDATOR_REGISTRY_LIMIT,
+//         EPOCHS_PER_HISTORICAL_VECTOR,
+//         EPOCHS_PER_SLASHINGS_VECTOR,
+//         MAX_VALIDATORS_PER_COMMITTEE,
+//         PENDING_ATTESTATIONS_BOUND,
+//     >,
+//     signed_block: &mut SignedBeaconBlock<
+//         MAX_PROPOSER_SLASHINGS,
+//         MAX_VALIDATORS_PER_COMMITTEE,
+//         MAX_ATTESTER_SLASHINGS,
+//         MAX_ATTESTATIONS,
+//         MAX_DEPOSITS,
+//         MAX_VOLUNTARY_EXITS,
+//     >,
+//     context: &Context,
+// ) -> Result<()> {
+//     let proposer_index = signed_block.message.proposer_index;
+//     let proposer = state
+//         .validators
+//         .get(proposer_index)
+//         .ok_or(Error::OutOfBounds {
+//             requested: proposer_index,
+//             bound: state.validators.len(),
+//         })?;
+//     let domain = get_domain(state, DomainType::BeaconProposer, None, context)?;
+//     let signing_root = compute_signing_root(&mut signed_block.message, domain)?;
 
-    let public_key = &proposer.public_key;
-    verify_signature(public_key, signing_root.as_ref(), &signed_block.signature).map_err(Into::into)
-}
+//     let public_key = &proposer.public_key;
+//     verify_signature(public_key, signing_root.as_ref(), &signed_block.signature).map_err(Into::into)
+// }
 
 pub fn get_domain<
     const SLOTS_PER_HISTORICAL_ROOT: usize,

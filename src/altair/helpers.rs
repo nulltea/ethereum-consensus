@@ -1,6 +1,6 @@
 use crate::altair as spec;
 
-use crate::crypto::{eth_aggregate_public_keys, hash};
+use crate::crypto::{hash};
 use crate::domains::DomainType;
 use crate::primitives::{BlsPublicKey, Epoch, Gwei, ParticipationFlags, ValidatorIndex};
 use crate::state_transition::{
@@ -85,42 +85,42 @@ pub fn get_next_sync_committee_indices<
 }
 
 // Return the next sync committee, with possible pubkey duplicates.
-pub fn get_next_sync_committee<
-    const SLOTS_PER_HISTORICAL_ROOT: usize,
-    const HISTORICAL_ROOTS_LIMIT: usize,
-    const ETH1_DATA_VOTES_BOUND: usize,
-    const VALIDATOR_REGISTRY_LIMIT: usize,
-    const EPOCHS_PER_HISTORICAL_VECTOR: usize,
-    const EPOCHS_PER_SLASHINGS_VECTOR: usize,
-    const MAX_VALIDATORS_PER_COMMITTEE: usize,
-    const SYNC_COMMITTEE_SIZE: usize,
->(
-    state: &BeaconState<
-        SLOTS_PER_HISTORICAL_ROOT,
-        HISTORICAL_ROOTS_LIMIT,
-        ETH1_DATA_VOTES_BOUND,
-        VALIDATOR_REGISTRY_LIMIT,
-        EPOCHS_PER_HISTORICAL_VECTOR,
-        EPOCHS_PER_SLASHINGS_VECTOR,
-        MAX_VALIDATORS_PER_COMMITTEE,
-        SYNC_COMMITTEE_SIZE,
-    >,
-    context: &Context,
-) -> Result<SyncCommittee<SYNC_COMMITTEE_SIZE>> {
-    let indices = get_next_sync_committee_indices(state, context)?;
-    let public_keys = indices
-        .into_iter()
-        .map(|i| state.validators[i].public_key.clone())
-        .collect::<Vec<_>>();
-    let public_keys = Vector::<BlsPublicKey, SYNC_COMMITTEE_SIZE>::try_from(public_keys)
-        .map_err(|(_, err)| err)?;
-    let aggregate_public_key = eth_aggregate_public_keys(&public_keys)?;
+// pub fn get_next_sync_committee<
+//     const SLOTS_PER_HISTORICAL_ROOT: usize,
+//     const HISTORICAL_ROOTS_LIMIT: usize,
+//     const ETH1_DATA_VOTES_BOUND: usize,
+//     const VALIDATOR_REGISTRY_LIMIT: usize,
+//     const EPOCHS_PER_HISTORICAL_VECTOR: usize,
+//     const EPOCHS_PER_SLASHINGS_VECTOR: usize,
+//     const MAX_VALIDATORS_PER_COMMITTEE: usize,
+//     const SYNC_COMMITTEE_SIZE: usize,
+// >(
+//     state: &BeaconState<
+//         SLOTS_PER_HISTORICAL_ROOT,
+//         HISTORICAL_ROOTS_LIMIT,
+//         ETH1_DATA_VOTES_BOUND,
+//         VALIDATOR_REGISTRY_LIMIT,
+//         EPOCHS_PER_HISTORICAL_VECTOR,
+//         EPOCHS_PER_SLASHINGS_VECTOR,
+//         MAX_VALIDATORS_PER_COMMITTEE,
+//         SYNC_COMMITTEE_SIZE,
+//     >,
+//     context: &Context,
+// ) -> Result<SyncCommittee<SYNC_COMMITTEE_SIZE>> {
+//     let indices = get_next_sync_committee_indices(state, context)?;
+//     let public_keys = indices
+//         .into_iter()
+//         .map(|i| state.validators[i].public_key.clone())
+//         .collect::<Vec<_>>();
+//     let public_keys = Vector::<BlsPublicKey, SYNC_COMMITTEE_SIZE>::try_from(public_keys)
+//         .map_err(|(_, err)| err)?;
+//     let aggregate_public_key = eth_aggregate_public_keys(&public_keys)?;
 
-    Ok(SyncCommittee::<SYNC_COMMITTEE_SIZE> {
-        public_keys,
-        aggregate_public_key,
-    })
-}
+//     Ok(SyncCommittee::<SYNC_COMMITTEE_SIZE> {
+//         public_keys,
+//         aggregate_public_key,
+//     })
+// }
 
 pub fn get_base_reward_per_increment<
     const SLOTS_PER_HISTORICAL_ROOT: usize,
