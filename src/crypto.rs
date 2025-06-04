@@ -32,7 +32,7 @@ pub enum Error {
     #[error("{0}")]
     SimpleSerialize(#[from] SimpleSerializeError),
     #[error("randomness failure: {0}")]
-    Randomness(#[from] rand::Error),
+    Randomness(#[from] rand_core::Error),
     // #[error("blst error: {0}")]
     // BLST(#[from] BLSTError),
     #[error("invalid signature")]

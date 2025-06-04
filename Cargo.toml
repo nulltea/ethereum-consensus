@@ -15,7 +15,7 @@ gen-tests = ["walkdir", "convert_case"]
 
 [dependencies]
 ssz-rs = { git = "https://github.com/ralexstokes/ssz-rs", rev = "adf1a0b14cef90b9536f28ef89da1fab316465e1" }
-rand = "0.8.4"
+rand_core = { version = "0.6.4", default-features = false }
 thiserror = "1.0.30"
 sha2 = "0.9.8"
 integer-sqrt = "0.1.5"
